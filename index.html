@@ -74,6 +74,7 @@
         }
 
         input[type="text"],
+        input[type="email"],
         input[type="date"],
         textarea {
             width: 100%;
@@ -89,6 +90,7 @@
         }
 
         input[type="text"]:focus,
+        input[type="email"]:focus,
         input[type="date"]:focus,
         textarea:focus {
             border-color: #5DFDCB;
@@ -175,14 +177,19 @@
 
         <hr class="divider">
 
-        <h1>Call-Out Request</h1>
-        <p class="subtitle">Fill out the form below to submit your absence.</p>
+        <h1>Time Off Request</h1>
 
         <form id="calloutForm">
             <div class="field">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" placeholder="Your Name" required>
             </div>
+
+
+        <div class="field">
+            <label for="email">Work Email</label>
+            <input type="email" id="email" placeholder="your@capital-infusion.com" pattern=".+@capital-infusion\.com" title="Must be a @capital-infusion.com email address" required>
+        </div>
 
             <div class="date-row">
                 <div class="field">
@@ -197,7 +204,7 @@
 
             <div class="field">
                 <label for="reason">Reason</label>
-                <textarea id="reason" placeholder="Please describe your reason for calling out..." required></textarea>
+                <textarea id="reason" placeholder="Please describe your reason for calling out..." minlength="5" required></textarea>
             </div>
 
             <button type="submit" id="submitBtn">Submit Request</button>
@@ -223,6 +230,20 @@
             const btn = document.getElementById("submitBtn");
             const msg = document.getElementById("successMsg");
 
+            const reasonValue = document.getElementById("reason").value;
+            if (reasonValue.trim().length < 5) {
+                msg.className = "error";
+                msg.textContent = "Please provide a reason with more than 4 characters.";
+                return;
+            }
+
+            const emailValue = document.getElementById("email").value;
+            if (!emailValue.endsWith("@capital-infusion.com")) {
+                msg.className = "error";
+                msg.textContent = "Please use your @capital-infusion.com work email.";
+                return;
+            }
+
             btn.disabled = true;
             btn.textContent = "Submitting...";
             msg.className = "";
@@ -231,6 +252,7 @@
 
             const payload = {
                 name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
                 startDate: document.getElementById("startDate").value,
                 endDate: document.getElementById("endDate").value,
                 reason: document.getElementById("reason").value,
