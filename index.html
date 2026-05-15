@@ -362,7 +362,6 @@
             }
         });
 
-        // Request Type logic
         const requestTypeEl = document.getElementById("requestType");
         const typeBadge = document.getElementById("typeBadge");
         const startDateEl = document.getElementById("startDate");
@@ -379,7 +378,6 @@
             adjustTimeEl.required = false;
             departureTimeEl.required = false;
 
-            // Reset departure checkbox
             hasDepartureTimeEl.checked = false;
             document.getElementById("departureTimeRow").classList.remove("visible");
             departureTimeEl.value = "";
@@ -417,6 +415,13 @@
         requestTypeEl.addEventListener("change", function () {
             updateFormForType(this.value);
         });
+
+        // Converts "YYYY-MM-DD" → "MM/DD/YYYY"
+        function formatDate(dateStr) {
+            if (!dateStr) return null;
+            const [yyyy, mm, dd] = dateStr.split("-");
+            return `${mm}/${dd}/${yyyy}`;
+        }
 
         const WEBHOOK_URL = "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/902b52dca10540b5acdbf9064bd60add/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WB9rPhXmCWTq6SM-qiAjv-0AwTu-Vo1wVoWjdLii-Wk";
 
@@ -460,12 +465,12 @@
             };
 
             if (type === "OOO") {
-                payload.startDate = startDateEl.value;
-                payload.endDate = endDateEl.value;
+                payload.startDate = formatDate(startDateEl.value);
+                payload.endDate = formatDate(endDateEl.value);
                 payload.adjustTime = hasDepartureTimeEl.checked ? departureTimeEl.value : null;
             } else {
-                payload.startDate = adjustDateEl.value;
-                payload.endDate = adjustDateEl.value;
+                payload.startDate = formatDate(adjustDateEl.value);
+                payload.endDate = formatDate(adjustDateEl.value);
                 payload.adjustTime = adjustTimeEl.value;
             }
 
