@@ -52,13 +52,6 @@
             letter-spacing: -0.3px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #7a8a9a;
-            font-size: 0.92rem;
-            margin-bottom: 32px;
-        }
-
         .field {
             margin-bottom: 20px;
         }
@@ -76,7 +69,9 @@
         input[type="text"],
         input[type="email"],
         input[type="date"],
-        textarea {
+        input[type="time"],
+        textarea,
+        select {
             width: 100%;
             padding: 11px 14px;
             border: 1.5px solid #BFD0E0;
@@ -92,10 +87,21 @@
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="date"]:focus,
-        textarea:focus {
+        input[type="time"]:focus,
+        textarea:focus,
+        select:focus {
             border-color: #5DFDCB;
             box-shadow: 0 0 0 3px rgba(93, 253, 203, 0.2);
             background: #fff;
+        }
+
+        select {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5a6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
         }
 
         textarea {
@@ -108,6 +114,87 @@
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
+
+        .field-hint {
+            font-size: 0.78rem;
+            color: #7a8a9a;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Animated conditional sections */
+        .conditional-section {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+        }
+
+        .conditional-section.visible {
+            max-height: 400px;
+            opacity: 1;
+        }
+
+        /* Departure time checkbox row */
+        .departure-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .departure-toggle-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #5DFDCB;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+            box-shadow: none;
+        }
+
+        .departure-toggle-row span {
+            font-size: 0.85rem;
+            color: #4a5a6a;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .departure-time-row {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.25s ease;
+        }
+
+        .departure-time-row.visible {
+            max-height: 100px;
+            opacity: 1;
+            margin-bottom: 20px;
+        }
+
+        /* Type badge */
+        .type-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .type-badge.ooo   { background: rgba(93,253,203,0.2); color: #0a7a5a; }
+        .type-badge.late  { background: rgba(255,200,100,0.2); color: #8a5a00; }
+        .type-badge.early { background: rgba(144,215,255,0.2); color: #1a5a8a; }
+        .type-badge.hidden { display: none; }
 
         button[type="submit"] {
             width: 100%;
@@ -130,9 +217,7 @@
             box-shadow: 0 6px 22px rgba(93, 253, 203, 0.45);
         }
 
-        button[type="submit"]:active {
-            transform: scale(0.98);
-        }
+        button[type="submit"]:active { transform: scale(0.98); }
 
         button[type="submit"]:disabled {
             opacity: 0.6;
@@ -177,34 +262,74 @@
 
         <hr class="divider">
 
-        <h1>Time Off Request</h1>
+        <h1>Time Off Request <span id="typeBadge" class="type-badge hidden"></span></h1>
 
         <form id="calloutForm">
+
             <div class="field">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" placeholder="Your Name" required>
             </div>
 
+            <div class="field">
+                <label for="email">Work Email</label>
+                <input type="email" id="email" placeholder="your@capital-infusion.com"
+                    pattern=".+@capital-infusion\.com"
+                    title="Must be a @capital-infusion.com email address" required>
+            </div>
 
-        <div class="field">
-            <label for="email">Work Email</label>
-            <input type="email" id="email" placeholder="your@capital-infusion.com" pattern=".+@capital-infusion\.com" title="Must be a @capital-infusion.com email address" required>
-        </div>
+            <div class="field">
+                <label for="requestType">Request Type</label>
+                <select id="requestType" required>
+                    <option value="" disabled selected>Select a type...</option>
+                    <option value="OOO">Out of Office (Full Day / Multi-Day)</option>
+                    <option value="coming_in_late">Coming In Late</option>
+                    <option value="leaving_early">Leaving Early</option>
+                </select>
+            </div>
 
-            <div class="date-row">
-                <div class="field">
-                    <label for="startDate">From</label>
-                    <input type="date" id="startDate" required>
+            <div class="conditional-section" id="sectionOOO">
+                <div class="date-row" style="margin-bottom: 16px;">
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="startDate">From</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="endDate">To</label>
+                        <input type="date" id="endDate">
+                    </div>
                 </div>
-                <div class="field">
-                    <label for="endDate">To</label>
-                    <input type="date" id="endDate" required>
+
+                <label class="departure-toggle-row">
+                    <input type="checkbox" id="hasDepartureTime">
+                    <span>Leaving early on the first day?</span>
+                </label>
+
+                <div class="departure-time-row" id="departureTimeRow">
+                    <div class="field" style="margin-bottom: 8px;">
+                        <label for="departureTime">Departure Time</label>
+                        <input type="time" id="departureTime">
+                        <p class="field-hint">OOO calendar event will start at this time on the first day</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="conditional-section" id="sectionTimeAdjust">
+                <div class="date-row" style="margin-bottom: 20px;">
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="adjustDate">Date</label>
+                        <input type="date" id="adjustDate">
+                    </div>
+                    <div class="field" style="margin-bottom:0;">
+                        <label for="adjustTime" id="adjustTimeLabel">Expected Time</label>
+                        <input type="time" id="adjustTime">
+                    </div>
                 </div>
             </div>
 
             <div class="field">
                 <label for="reason">Reason</label>
-                <textarea id="reason" placeholder="Please describe your reason for calling out..." minlength="5" required></textarea>
+                <textarea id="reason" placeholder="Please describe your reason..." minlength="5" required></textarea>
             </div>
 
             <button type="submit" id="submitBtn">Submit Request</button>
@@ -214,21 +339,213 @@
     </div>
 
     <script>
-        const today = new Date().toISOString().split("T")[0]; // Gets today's Date
+        const today = new Date().toISOString().split("T")[0];
+
         document.getElementById("startDate").min = today;
         document.getElementById("endDate").min = today;
+        document.getElementById("adjustDate").min = today;
 
         document.getElementById("startDate").addEventListener("change", function () {
             document.getElementById("endDate").min = this.value || today;
         });
 
-        const WEBHOOK_URL = "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/902b52dca10540b5acdbf9064bd60add/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WB9rPhXmCWTq6SM-qiAjv-0AwTu-Vo1wVoWjdLii-Wk";
+        document.getElementById("hasDepartureTime").addEventListener("change", function () {
+            const row = document.getElementById("departureTimeRow");
+            const timeInput = document.getElementById("departureTime");
+            if (this.checked) {
+                row.classList.add("visible");
+                timeInput.required = true;
+            } else {
+                row.classList.remove("visible");
+                timeInput.required = false;
+                timeInput.value = "";
+            }
+        });
+
+        // Request Type logic
+        const requestTypeEl = document.getElementById("requestType");
+        const typeBadge = document.getElementById("typeBadge");
+        const startDateEl = document.getElementById("startDate");
+        const endDateEl = document.getElementById("endDate");
+        const adjustDateEl = document.getElementById("adjustDate");
+        const adjustTimeEl = document.getElementById("adjustTime");
+        const departureTimeEl = document.getElementById("departureTime");
+        const hasDepartureTimeEl = document.getElementById("hasDepartureTime");
+
+        function updateFormForType(type) {
+            startDateEl.required = false;
+            endDateEl.required = false;
+            adjustDateEl.required = false;
+            adjustTimeEl.required = false;
+            departureTimeEl.required = false;
+
+            // Reset departure checkbox
+            hasDepartureTimeEl.checked = false;
+            document.getElementById("departureTimeRow").classList.remove("visible");
+            departureTimeEl.value = "";
+
+            if (type === "OOO") {
+                document.getElementById("sectionOOO").classList.add("visible");
+                document.getElementById("sectionTimeAdjust").classList.remove("visible");
+                startDateEl.required = true;
+                endDateEl.required = true;
+                typeBadge.textContent = "OOO";
+                typeBadge.className = "type-badge ooo";
+            } else if (type === "coming_in_late") {
+                document.getElementById("sectionOOO").classList.remove("visible");
+                document.getElementById("sectionTimeAdjust").classList.add("visible");
+                adjustDateEl.required = true;
+                adjustTimeEl.required = true;
+                document.getElementById("adjustTimeLabel").textContent = "Arriving At";
+                typeBadge.textContent = "Coming In Late";
+                typeBadge.className = "type-badge late";
+            } else if (type === "leaving_early") {
+                document.getElementById("sectionOOO").classList.remove("visible");
+                document.getElementById("sectionTimeAdjust").classList.add("visible");
+                adjustDateEl.required = true;
+                adjustTimeEl.required = true;
+                document.getElementById("adjustTimeLabel").textContent = "Leaving At";
+                typeBadge.textContent = "Leaving Early";
+                typeBadge.className = "type-badge early";
+            } else {
+                document.getElementById("sectionOOO").classList.remove("visible");
+                document.getElementById("sectionTimeAdjust").classList.remove("visible");
+                typeBadge.className = "type-badge hidden";
+            }
+        }
+
+        requestTypeEl.addEventListener("change", function () {
+            updateFormForType(this.value);
+        });
+
+        const TEAM_MANAGERS = {
+            ivan: {
+                name: "Ivan Ortega",
+                email: "ivan@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/21/workflows/203bd8a51ebc4ccd8b6d7ecd03015f4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AmCDwYMbWjDtrhM1bHYmnIR8eNIUrEWrElSs4GEBfU4",
+            },
+            ray: {
+                name: "Ray Ortega",
+                email: "ray@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/1ad03a461249403994841af99ab48874/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=skXw3UBLXgeKEkrVegjr9bKN49-N0W-CI5V0_BISH0I",
+            },
+            diaz: {
+                name: "Anthony Diaz",
+                email: "anthonyd@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/d9f77731735c45a8a9c0e5332c4b5657/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Ye9kKndr7Ona9025xoKh45DVN-0FHpjQF7o-HW5p2nc",
+            },
+            careem: {
+                name: "Careem",
+                email: "careem@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/d9f77731735c45a8a9c0e5332c4b5657/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Ye9kKndr7Ona9025xoKh45DVN-0FHpjQF7o-HW5p2nc",
+            },
+            operations: {
+                name: "Chris",
+                email: "chris@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/3ee5a70e23f6402eb1b9018e05cf71a1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uHlA93LNJ4xf2aElANE1F8fPK3Uk93rKBtnAhWx6xYg",
+            },
+            tech: {
+                name: "Alexs & Jasonk (Tech Admins)",
+                email: "alexs@capital-infusion.com, jasonk@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/20/workflows/c50ae64263014c2d887dde67877499d4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gT_oad8PGDAuSFPLAPqeFCAInueyxNPjV7DQR3Lxp3M",
+            },
+            marketing: {
+                name: "Jonathan",
+                email: "jonathan@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/21/workflows/fe1d32e44f2a42ce847dedfe65b55a7a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f-WkuPn7eBQiB1kZRUYeoAUZ0exhT2HIbc8FJ7T62hE",
+            },
+            admin: {
+                name: "Alexa",
+                email: "alexa@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/cb3510eb1441414a85c598148248e8c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9siQ2gjRjs_QKeR5N0s9GCr3I1j4VJMfAwGu51RpGik",
+            },
+        };
+
+        // Maps each submitter's email to the manager key in TEAM_MANAGERS whose
+        // flow their request should be posted to. Anyone not listed here
+        // (e.g. a top-level manager submitting their own request) falls back to "careem".
+        const REP_TO_MANAGER = {
+            // Ivan's team
+            "danielp@capital-infusion.com": "ivan",
+            "kcohen@capital-infusion.com": "ivan",
+            "alejandrom@capital-infusion.com": "ivan",
+            "jeudy@capital-infusion.com": "ivan",
+            "stevenc@capital-infusion.com": "ivan",
+
+            // Ray's team
+            "jamar@capital-infusion.com": "ray",
+            "andyb@capital-infusion.com": "ray",
+            "cipriani@capital-infusion.com": "ray",
+            "evan@capital-infusion.com": "ray",
+            "matthewm@capital-infusion.com": "ray",
+
+            // Anthony Diaz's team
+            "juans@capital-infusion.com": "diaz",
+            "gabriels@capital-infusion.com": "diaz",
+            "nikholas@capital-infusion.com": "diaz",
+            "frankp@capital-infusion.com": "diaz",
+            "christianq@capital-infusion.com": "diaz",
+
+            // Unmanaged reps -> Careem
+            "kip@capital-infusion.com": "careem",
+            "michael@capital-infusion.com": "careem",
+            "rio@capital-infusion.com": "careem",
+            "santiago@capital-infusion.com": "careem",
+            "andyr@capital-infusion.com": "careem",
+            "joseph@capital-infusion.com": "careem",
+            "kevinm@capital-infusion.com": "careem",
+            "dominic@capital-infusion.com": "careem",
+            "brandon@capital-infusion.com": "careem",
+            "richardc@capital-infusion.com": "careem",
+            "doyle@capital-infusion.com": "careem",
+            "ken@capital-infusion.com": "careem",
+            "cristian@capital-infusion.com": "careem",
+            "emilio@capital-infusion.com": "careem",
+            "colin@capital-infusion.com": "careem",
+            "jonathanm@capital-infusion.com": "careem",
+            "blake@capital-infusion.com": "careem",
+
+            // Marketing team
+            "andrea@capital-infusion.com": "marketing",
+            "cristopher@capital-infusion.com": "marketing",
+            "guillermo@capital-infusion.com": "marketing",
+            "vanessa@capital-infusion.com": "marketing",
+
+            // Admin team (Alexa's reports)
+            "marco@capital-infusion.com": "admin",
+            "jennifer@capital-infusion.com": "admin",
+            "rachel@capital-infusion.com": "admin",
+            "cielo@capital-infusion.com": "admin",
+            "dianne@capital-infusion.com": "admin",
+
+            // Operations team (Chris's reports, including Alexa's own requests)
+            "jonathan@capital-infusion.com": "operations",
+            "alexa@capital-infusion.com": "operations",
+            "jasonk@capital-infusion.com": "operations",
+            "alexs@capital-infusion.com": "operations",
+            "matthews@capital-infusion.com": "operations",
+            "jasmin@capital-infusion.com": "operations",
+
+            // Tech team
+            "gustavo@capital-infusion.com": "tech",
+            "mohammed@capital-infusion.com": "tech",
+            "pavan@capital-infusion.com": "tech",
+
+            // Operations team (Chris's reports)
+            "jcernada@capital-infusion.com": "operations",
+        };
+
+        function getManagerForEmail(email) {
+            const key = REP_TO_MANAGER[email.trim().toLowerCase()] || "careem";
+            return TEAM_MANAGERS[key];
+        }
 
         document.getElementById("calloutForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
             const btn = document.getElementById("submitBtn");
             const msg = document.getElementById("successMsg");
+            const type = requestTypeEl.value;
 
             const reasonValue = document.getElementById("reason").value;
             if (reasonValue.trim().length < 5) {
@@ -244,22 +561,39 @@
                 return;
             }
 
+            if (!type) {
+                msg.className = "error";
+                msg.textContent = "Please select a request type.";
+                return;
+            }
+
             btn.disabled = true;
             btn.textContent = "Submitting...";
             msg.className = "";
             msg.textContent = "";
-            
+
+            const manager = getManagerForEmail(emailValue);
 
             const payload = {
                 name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                startDate: document.getElementById("startDate").value,
-                endDate: document.getElementById("endDate").value,
-                reason: document.getElementById("reason").value,
+                email: emailValue,
+                requestType: type,
+                reason: reasonValue,
+                managerEmail: manager.email,
             };
 
+            if (type === "OOO") {
+                payload.startDate = startDateEl.value;
+                payload.endDate = endDateEl.value;
+                payload.adjustTime = hasDepartureTimeEl.checked ? departureTimeEl.value : null;
+            } else {
+                payload.startDate = adjustDateEl.value;
+                payload.endDate = adjustDateEl.value;
+                payload.adjustTime = adjustTimeEl.value;
+            }
+
             try {
-                await fetch(WEBHOOK_URL, {
+                await fetch(manager.flowUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
@@ -267,6 +601,7 @@
                 msg.className = "success";
                 msg.textContent = "Request submitted successfully!";
                 this.reset();
+                updateFormForType("");
             } catch (err) {
                 msg.className = "error";
                 msg.textContent = "Failed to submit. Please try again.";
