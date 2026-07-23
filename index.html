@@ -418,7 +418,127 @@
             updateFormForType(this.value);
         });
 
-        const WEBHOOK_URL = "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/902b52dca10540b5acdbf9064bd60add/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WB9rPhXmCWTq6SM-qiAjv-0AwTu-Vo1wVoWjdLii-Wk";
+        const TEAM_MANAGERS = {
+            ivan: {
+                name: "Ivan Ortega",
+                email: "ivan@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/21/workflows/203bd8a51ebc4ccd8b6d7ecd03015f4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AmCDwYMbWjDtrhM1bHYmnIR8eNIUrEWrElSs4GEBfU4",
+            },
+            ray: {
+                name: "Ray Ortega",
+                email: "ray@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/1ad03a461249403994841af99ab48874/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=skXw3UBLXgeKEkrVegjr9bKN49-N0W-CI5V0_BISH0I",
+            },
+            diaz: {
+                name: "Anthony Diaz",
+                email: "anthonyd@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/d9f77731735c45a8a9c0e5332c4b5657/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Ye9kKndr7Ona9025xoKh45DVN-0FHpjQF7o-HW5p2nc",
+            },
+            careem: {
+                name: "Careem",
+                email: "careem@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/d9f77731735c45a8a9c0e5332c4b5657/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Ye9kKndr7Ona9025xoKh45DVN-0FHpjQF7o-HW5p2nc",
+            },
+            operations: {
+                name: "Chris",
+                email: "chris@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/3ee5a70e23f6402eb1b9018e05cf71a1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uHlA93LNJ4xf2aElANE1F8fPK3Uk93rKBtnAhWx6xYg",
+            },
+            tech: {
+                name: "Alexs & Jasonk (Tech Admins)",
+                email: "alexs@capital-infusion.com, jasonk@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/20/workflows/c50ae64263014c2d887dde67877499d4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gT_oad8PGDAuSFPLAPqeFCAInueyxNPjV7DQR3Lxp3M",
+            },
+            marketing: {
+                name: "Jonathan",
+                email: "jonathan@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/21/workflows/fe1d32e44f2a42ce847dedfe65b55a7a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f-WkuPn7eBQiB1kZRUYeoAUZ0exhT2HIbc8FJ7T62hE",
+            },
+            admin: {
+                name: "Alexa",
+                email: "alexa@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/cb3510eb1441414a85c598148248e8c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9siQ2gjRjs_QKeR5N0s9GCr3I1j4VJMfAwGu51RpGik",
+            },
+        };
+
+        // Maps each submitter's email to the manager key in TEAM_MANAGERS whose
+        // flow their request should be posted to. Anyone not listed here
+        // (e.g. a top-level manager submitting their own request) falls back to "careem".
+        const REP_TO_MANAGER = {
+            // Ivan's team
+            "danielp@capital-infusion.com": "ivan",
+            "kcohen@capital-infusion.com": "ivan",
+            "alejandrom@capital-infusion.com": "ivan",
+            "jeudy@capital-infusion.com": "ivan",
+            "stevenc@capital-infusion.com": "ivan",
+
+            // Ray's team
+            "jamar@capital-infusion.com": "ray",
+            "andyb@capital-infusion.com": "ray",
+            "cipriani@capital-infusion.com": "ray",
+            "evan@capital-infusion.com": "ray",
+            "matthewm@capital-infusion.com": "ray",
+
+            // Anthony Diaz's team
+            "juans@capital-infusion.com": "diaz",
+            "gabriels@capital-infusion.com": "diaz",
+            "nikholas@capital-infusion.com": "diaz",
+            "frankp@capital-infusion.com": "diaz",
+            "christianq@capital-infusion.com": "diaz",
+
+            // Unmanaged reps -> Careem
+            "kip@capital-infusion.com": "careem",
+            "michael@capital-infusion.com": "careem",
+            "rio@capital-infusion.com": "careem",
+            "santiago@capital-infusion.com": "careem",
+            "andyr@capital-infusion.com": "careem",
+            "joseph@capital-infusion.com": "careem",
+            "kevinm@capital-infusion.com": "careem",
+            "dominic@capital-infusion.com": "careem",
+            "brandon@capital-infusion.com": "careem",
+            "richardc@capital-infusion.com": "careem",
+            "doyle@capital-infusion.com": "careem",
+            "ken@capital-infusion.com": "careem",
+            "cristian@capital-infusion.com": "careem",
+            "emilio@capital-infusion.com": "careem",
+            "colin@capital-infusion.com": "careem",
+            "jonathanm@capital-infusion.com": "careem",
+            "blake@capital-infusion.com": "careem",
+
+            // Marketing team
+            "andrea@capital-infusion.com": "marketing",
+            "cristopher@capital-infusion.com": "marketing",
+            "guillermo@capital-infusion.com": "marketing",
+            "vanessa@capital-infusion.com": "marketing",
+
+            // Admin team (Alexa's reports)
+            "marco@capital-infusion.com": "admin",
+            "jennifer@capital-infusion.com": "admin",
+            "rachel@capital-infusion.com": "admin",
+            "cielo@capital-infusion.com": "admin",
+            "dianne@capital-infusion.com": "admin",
+
+            // Operations team (Chris's reports, including Alexa's own requests)
+            "jonathan@capital-infusion.com": "operations",
+            "alexa@capital-infusion.com": "operations",
+            "jasonk@capital-infusion.com": "operations",
+            "alexs@capital-infusion.com": "operations",
+            "matthews@capital-infusion.com": "operations",
+            "jasmin@capital-infusion.com": "operations",
+            "gustavo@capital-infusion.com": "operations",
+            "mohammed@capital-infusion.com": "operations",
+            "pavan@capital-infusion.com": "operations",
+            "jcernada@capital-infusion.com": "operations",
+            "rodney@capital-infusion.com": "operations",
+            "chris@capital-infusion.com": "operations",
+            "careem@capital-infusion.com": "operations",
+
+        };
+
+        function getManagerForEmail(email) {
+            const key = REP_TO_MANAGER[email.trim().toLowerCase()] || "careem";
+            return TEAM_MANAGERS[key];
+        }
 
         document.getElementById("calloutForm").addEventListener("submit", async function (e) {
             e.preventDefault();
@@ -452,11 +572,14 @@
             msg.className = "";
             msg.textContent = "";
 
+            const manager = getManagerForEmail(emailValue);
+
             const payload = {
                 name: document.getElementById("name").value,
                 email: emailValue,
                 requestType: type,
                 reason: reasonValue,
+                managerEmail: manager.email,
             };
 
             if (type === "OOO") {
@@ -470,7 +593,7 @@
             }
 
             try {
-                await fetch(WEBHOOK_URL, {
+                await fetch(manager.flowUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
