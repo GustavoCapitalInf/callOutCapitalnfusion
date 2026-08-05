@@ -454,6 +454,11 @@
                 email: "alexa@capital-infusion.com",
                 flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/cb3510eb1441414a85c598148248e8c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=9siQ2gjRjs_QKeR5N0s9GCr3I1j4VJMfAwGu51RpGik",
             },
+            rodney: {
+                name: "Rodney",
+                email: "rodney@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/b6581adf83dc48d4aa58ca3031270576/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8QFuZO3vUmisV88YueeaQLt2eBPf3bVODGX-2Ldaru0",
+            },
         };
 
         // Maps each submitter's email to the manager key in TEAM_MANAGERS whose
@@ -527,6 +532,11 @@
             "rodney@capital-infusion.com": "operations",
             "chris@capital-infusion.com": "operations",
             "careem@capital-infusion.com": "operations",
+
+            // Team leads' own requests -> Rodney
+            "ivan@capital-infusion.com": "rodney",
+            "ray@capital-infusion.com": "rodney",
+            "anthonyd@capital-infusion.com": "rodney",
         };
 
         function getManagerForEmail(email) {
