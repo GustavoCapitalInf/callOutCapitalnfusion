@@ -463,7 +463,7 @@
 
         // Maps each submitter's email to the manager key in TEAM_MANAGERS whose
         // flow their request should be posted to. Anyone not listed here
-        // (e.g. a top-level manager submitting their own request) falls back to "operations" (Chris).
+        // (e.g. a top-level manager submitting their own request) falls back to "careem".
         const REP_TO_MANAGER = {
             // Ivan's team
             "danielp@capital-infusion.com": "ivan",
@@ -481,6 +481,7 @@
 
             // Anthony Diaz's team
             "juans@capital-infusion.com": "diaz",
+            "johns@capital-infusion.com": "diaz",
             "gabriels@capital-infusion.com": "diaz",
             "nikholas@capital-infusion.com": "diaz",
             "frankp@capital-infusion.com": "diaz",
@@ -540,7 +541,7 @@
         };
 
         function getManagerForEmail(email) {
-            const key = REP_TO_MANAGER[email.trim().toLowerCase()] || "operations";
+            const key = REP_TO_MANAGER[email.trim().toLowerCase()] || "careem";
             return TEAM_MANAGERS[key];
         }
 
