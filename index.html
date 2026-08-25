@@ -437,7 +437,7 @@
             careem: {
                 name: "Careem",
                 email: "careem@capital-infusion.com",
-                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/d9f77731735c45a8a9c0e5332c4b5657/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Ye9kKndr7Ona9025xoKh45DVN-0FHpjQF7o-HW5p2nc",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/11/workflows/0d4edb432369441292c6132acf25729e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=jnKvybzCZmj3GdvLMr9R00BShVR2RijZDHsUU8FoIqU",
             },
             operations: {
                 name: "Chris",
@@ -459,6 +459,11 @@
                 email: "cristian@capital-infusion.com",
                 flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/03/workflows/4cf508d0fecc4c87b0471e93dfe1c4d7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=a9sfne3kDLHfUGQTBDmra3IIUAwyZ7VeiK7CnEBFT7s",
             },
+            rodney: {
+                name: "Rodney",
+                email: "rodney@capital-infusion.com",
+                flowUrl: "https://default87067de17bff468994aa610cdb27ba.92.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/b6581adf83dc48d4aa58ca3031270576/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8QFuZO3vUmisV88YueeaQLt2eBPf3bVODGX-2Ldaru0",
+            },
         };
 
         // Maps each submitter's email to the manager key in TEAM_MANAGERS whose
@@ -478,9 +483,11 @@
             "cipriani@capital-infusion.com": "ray",
             "evan@capital-infusion.com": "ray",
             "matthewm@capital-infusion.com": "ray",
+            "richardC@capital-infusion.com": "ray",
 
             // Anthony Diaz's team
             "juans@capital-infusion.com": "diaz",
+            "johns@capital-infusion.com": "diaz",
             "gabriels@capital-infusion.com": "diaz",
             "nikholas@capital-infusion.com": "diaz",
             "frankp@capital-infusion.com": "diaz",
@@ -531,17 +538,18 @@
             "alexs@capital-infusion.com": "operations",
             "matthews@capital-infusion.com": "operations",
             "jasmin@capital-infusion.com": "operations",
-            "chris@capital-infusion.com": "operations",
-            "careem@capital-infusion.com": "operations",
-            "rodney@capital-infusion.com": "operations",
-
-            // Tech admins (former "tech" team), now under Chris/operations
             "gustavo@capital-infusion.com": "operations",
             "mohammed@capital-infusion.com": "operations",
             "pavan@capital-infusion.com": "operations",
-
-            // Operations team (Chris's reports)
             "jcernada@capital-infusion.com": "operations",
+            "rodney@capital-infusion.com": "operations",
+            "chris@capital-infusion.com": "operations",
+            "careem@capital-infusion.com": "operations",
+
+            // Team leads' own requests -> Rodney
+            "ivan@capital-infusion.com": "rodney",
+            "ray@capital-infusion.com": "rodney",
+            "anthonyd@capital-infusion.com": "rodney",
         };
 
         function getManagerForEmail(email) {
