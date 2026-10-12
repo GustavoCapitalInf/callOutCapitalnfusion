@@ -273,9 +273,7 @@
 
             <div class="field">
                 <label for="email">Work Email</label>
-                <input type="email" id="email" placeholder="your@capital-infusion.com"
-                    pattern=".+@capital-infusion\.com"
-                    title="Must be a @capital-infusion.com email address" required>
+                <input type="email" id="email" placeholder="your@capital-infusion.com" required>
             </div>
 
             <div class="field">
@@ -512,10 +510,10 @@
 
 
             // Cristian Pina's team
-            "Jake@capital-infusion.com": "pina",
+            "jake@capital-infusion.com": "pina",
             "mraymond@capital-infusion.com": "pina",
             "angel@capital-infusion.com": "pina",
-            "Rosmery@capital-infusion.com": "pina",
+            "rosmery@capital-infusion.com": "pina",
             "ryang@capital-infusion.com": "pina",
 
 
@@ -532,8 +530,8 @@
             "dianne@capital-infusion.com": "admin",
             "natalie@capital-infusion.com": "admin",
             "manuela@capital-infusion.com": "admin",
-            "Jessica@capital-infusion.com": "admin",
-            "Anna@capital-infusion.com": "admin",
+            "jessica@capital-infusion.com": "admin",
+            "anna@capital-infusion.com": "admin",
 
 
             // Operations team (Chris's reports, including Alexa's own requests)
@@ -558,7 +556,7 @@
         };
 
         function getManagerForEmail(email) {
-            const key = REP_TO_MANAGER[email.trim().toLowerCase()] || "careem";
+            const key = REP_TO_MANAGER[email] || "careem";
             return TEAM_MANAGERS[key];
         }
 
@@ -576,7 +574,7 @@
                 return;
             }
 
-            const emailValue = document.getElementById("email").value;
+            const emailValue = document.getElementById("email").value.trim().toLowerCase();
             if (!emailValue.endsWith("@capital-infusion.com")) {
                 msg.className = "error";
                 msg.textContent = "Please use your @capital-infusion.com work email.";
